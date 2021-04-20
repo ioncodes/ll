@@ -1,2 +1,4 @@
 .ccls*
 .vscode/
+build/
+cmake-*/
