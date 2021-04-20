@@ -10,7 +10,6 @@ TEST_CASE("File tests", "[file.hpp]")
 #else
         auto test_file = file{"/bin/sh"};
         auto content = test_file.read();
-        printf("%d\n",content.size());
         REQUIRE(test_file.read()[1] == 'E');
 #endif
     }

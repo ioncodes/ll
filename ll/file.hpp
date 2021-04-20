@@ -25,19 +25,14 @@ public:
     std::vector<T> read(std::streamsize amount = 0)
     {
         if (amount == 0)
-        {
-            std::vector<T> buffer(m_size / sizeof(T));
-            m_file.read((char*)buffer.data(), m_size);
+            amount = m_size / sizeof(T);
 
-            return buffer;
-        }
-        else
-        {
-            std::vector<T> buffer(amount);
-            m_file.read((char*)buffer.data(), amount);
+        assert(amount % sizeof(T) == 0 && "amount must be multiple of sizeof(T)");
 
-            return buffer;
-        }
+        std::vector<T> buffer(amount);
+        m_file.read((char*)buffer.data(), amount);
+
+        return buffer;
     }
 
     template<typename T = uint8_t>
