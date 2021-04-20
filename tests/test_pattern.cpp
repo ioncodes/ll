@@ -7,7 +7,7 @@ TEST_CASE("Pattern tests", "[pattern.hpp]")
 {
     SECTION("Find pattern")
     {
-        const std::vector<uint8_t> data = { 0x01, 0x02 };
+        std::vector<uint8_t> data = { 0x01, 0x02 };
         auto iterators = pattern::find(data, { 0x01, {} });
 
         REQUIRE(iterators.size() == 1);
@@ -20,5 +20,14 @@ TEST_CASE("Pattern tests", "[pattern.hpp]")
 
         REQUIRE(pattern[0] == 0x01);
         REQUIRE(pattern[1] == std::nullopt);
+    }
+
+    SECTION("Replace pattern")
+    {
+        std::vector<uint8_t> data = { 0x01, 0x02 };
+        pattern::replace(data, { 0x01, {} }, { 0x13, 0x37 });
+
+        REQUIRE(data[0] == 0x13);
+        REQUIRE(data[1] == 0x37);
     }
 }

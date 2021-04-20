@@ -4,6 +4,7 @@
 #include <optional>
 #include <filesystem>
 #include <fstream>
+#include <algorithm>
 #include "utils.hpp"
 #include "ll.hpp"
 
@@ -11,9 +12,9 @@ using namespace ll;
 
 namespace pattern {
     template<typename T>
-    auto find(const std::vector<T> &data, std::vector<pattern_t> pattern)
+    auto find(std::vector<T> &data, std::vector<pattern_t> pattern)
     {
-        std::vector<typename std::vector<T>::const_iterator> indices;
+        std::vector<typename std::vector<T>::iterator> indices;
 
         for (size_t i = 0; i < data.size(); ++i)
         {
@@ -29,7 +30,7 @@ namespace pattern {
             }
 
             if (found)
-                indices.push_back(std::next(data.begin(), i));
+                indices.emplace_back(std::next(data.begin(), i));
         }
 
         return indices;
@@ -56,5 +57,12 @@ namespace pattern {
         }
 
         return pattern;
+    }
+
+    template<typename T>
+    auto replace(std::vector<T>& data, std::vector<pattern_t> pattern, const std::vector<T>& value)
+    {
+        for (const auto& iterator : pattern::find(data, pattern))
+            std::copy(value.begin(), value.end(), iterator);
     }
 };
