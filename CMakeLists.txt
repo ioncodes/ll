@@ -17,6 +17,6 @@ add_executable(tests
         tests/test_file.cpp ll/file.hpp)
 
 target_include_directories(tests PRIVATE ./)
-target_link_libraries(tests Catch2::Catch2)
+target_link_libraries(tests PRIVATE Catch2::Catch2)
 
 add_executable(ll ll/ll.hpp tests/test_pattern.cpp tests/test_file.cpp ll/file.hpp tests/test_file.cpp)

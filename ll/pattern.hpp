@@ -12,7 +12,7 @@ using namespace ll;
 
 namespace pattern {
     template<typename T>
-    auto find(std::vector<T> &data, std::vector<pattern_t> pattern)
+    auto find(std::vector<T>& data, std::vector<pattern_t> pattern)
     {
         std::vector<typename std::vector<T>::iterator> indices;
 
@@ -43,15 +43,18 @@ namespace pattern {
         for (auto ptr = pattern_str.begin(); ptr < pattern_str.end(); ptr++)
         {
             const char character1 = *ptr;
-            const char character2 = *std::next(ptr);
+            const auto character2 = std::next(ptr);
 
-            if (character1 == '?' || character2 == '?')
+            if (character2 == pattern_str.end())
+                break;
+
+            if (character1 == '?' || *character2 == '?')
             {
                 pattern.emplace_back(std::nullopt);
                 continue;
             }
 
-            const auto hex_string = utils::fmt("0x%c%c", character1, character2);
+            const auto hex_string = utils::fmt("0x%c%c", character1, *character2);
             const auto hex_value = std::stoul(hex_string, nullptr, 16);
             pattern.emplace_back(hex_value);
         }

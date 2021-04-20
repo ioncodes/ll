@@ -5,32 +5,76 @@
 #include <filesystem>
 #include <fstream>
 
+#ifdef _WIN32
+#include <ll/win/io.hpp>
+#else
+#endif
+
+#include "ll.hpp"
+
 class file
 {
 private:
-    std::ifstream m_file;
-    std::filesystem::path m_path;
-    std::streampos m_size;
+    ll::handle_t m_handle = nullptr;
+    const std::string m_path;
 
 public:
-    explicit file(const std::string& path) :
-        m_path(path), m_file(std::ifstream(m_path, std::ios::binary)), m_size(0)
+    explicit file(const std::string& path) : m_path(path)
     {
-        m_file.seekg(0, std::ios_base::end);
-        m_size = m_file.tellg();
-        m_file.seekg(0, std::ios_base::beg);
+#ifdef _WIN32
+        m_handle = io::create_file(
+                path.c_str(),
+                static_cast<uint32_t>(ll::operation::read),
+                0,
+                nullptr,
+                static_cast<uint32_t>(ll::operation::open_existing),
+                static_cast<uint32_t>(ll::attribute::normal),
+                nullptr);
+#else
+#endif
+    }
+
+    ~file()
+    {
+        this->close();
+    }
+
+    inline size_t size()
+    {
+#ifdef _WIN32
+        return GetFileSize(m_handle, nullptr);
+#else
+#endif
+    }
+
+    inline void close()
+    {
+#ifdef _WIN32
+        if (m_handle)
+            CloseHandle(m_handle);
+#else
+#endif
+    }
+
+    ll::handle_t handle() const
+    {
+        return m_handle;
     }
 
     template<typename T = uint8_t>
-    std::vector<T> read(std::streamsize amount = 0)
+    std::vector<T> read(std::streamsize size = 0)
     {
-        if (amount == 0)
-            amount = m_size / sizeof(T);
+        if (size == 0)
+            size = this->size() / sizeof(T);
 
-        assert(amount % sizeof(T) == 0 && "amount must be multiple of sizeof(T)");
+        assert(size % sizeof(T) == 0 && "size must be multiple of sizeof(T)");
 
-        std::vector<T> buffer(amount);
-        m_file.read((char*)buffer.data(), amount);
+        std::vector<T> buffer(size);
+
+#ifdef _WIN32
+        io::read_file(m_handle, buffer.data(), size);
+#else
+#endif
 
         return buffer;
     }
