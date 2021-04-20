@@ -12,8 +12,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(tests tests/test_pattern.cpp ll/pattern.hpp)
+add_executable(tests
+        tests/test_pattern.cpp ll/pattern.hpp
+        tests/test_file.cpp ll/file.hpp)
+
 target_include_directories(tests PRIVATE ./)
 target_link_libraries(tests Catch2::Catch2)
 
-add_executable(ll ll/ll.hpp tests/test_pattern.cpp)
+add_executable(ll ll/ll.hpp tests/test_pattern.cpp tests/test_file.cpp ll/file.hpp tests/test_file.cpp)
