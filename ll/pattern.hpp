@@ -5,10 +5,11 @@
 #include <filesystem>
 #include <fstream>
 #include "utils.hpp"
+#include "ll.hpp"
+
+using namespace ll;
 
 namespace pattern {
-    using pattern_t = std::optional<uint8_t>;
-
     template<typename T>
     auto find(const std::vector<T> &data, std::vector<pattern_t> pattern)
     {
